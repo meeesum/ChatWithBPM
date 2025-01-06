@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import UserImage from '../assets/images/user_image.jpg';
+import UserImage from '../assets/images/user_image.jpeg';
 
 const Navbar = () => {
   // Check if the user is logged in from localStorage
