@@ -136,11 +136,11 @@ const ChatsPage = () => {
       </div>
 
       {/* Chat Area with no flex-grow */}
-      <div className="w-full max-w-[calc(100%-320px)] p-6 bg-white">
+      <div className="w-full max-w-[calc(100%-320px)] p-6 bg-white mb-16">
         {selectedChatId ? (
           <>
             <Chat messages={messages} />
-            <div className="flex items-center mt-4">
+            <div className="flex items-center mt-4 ">
               <input
                 type="text"
                 placeholder="Type your message..."

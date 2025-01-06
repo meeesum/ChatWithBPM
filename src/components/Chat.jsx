@@ -32,7 +32,7 @@ const Chat = ({ messages, onSendMessage }) => {
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSubmit} className="flex">
+      {/* <form onSubmit={handleSubmit} className="flex">
         <input
           type="text"
           placeholder="Type a message..."
@@ -46,7 +46,7 @@ const Chat = ({ messages, onSendMessage }) => {
         >
           Send
         </button>
-      </form>
+      </form> */}
     </div>
   );
 };

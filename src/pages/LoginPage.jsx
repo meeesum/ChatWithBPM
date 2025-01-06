@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaEnvelope, FaKey, FaGoogle, FaFacebook } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DataProtectionImage from 'C:\\Users\\Meesum Raza\\Desktop\\ChatWithBPM\\ChatWithBPM\\src\\assets\\images\\data_protection.jpg';
 import LogoImage from 'C:\\Users\\Meesum Raza\\Desktop\\ChatWithBPM\\ChatWithBPM\\src\\assets\\images\\Logo.png';
 
 const LoginPage = () => {
+  // States for form inputs
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
+
+  // Dummy login credentials
+  const validEmail = 'test@g';
+  const validPassword = '12';
+
+  // Handle form submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validate credentials
+    if (email === validEmail && password === validPassword) {
+      // Save user data to localStorage to persist login state
+      const userData = { username: 'JohnDoe', profileImage: '/path/to/image.jpg' }; // Example user data
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Successful login, navigate to the ChatPage
+      navigate('/chatspage');
+    } else {
+      setError('Invalid username or password');
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white overflow-hidden px-4 md:px-12">
+    <div className="min-h-screen flex items-center justify-center bg-white overflow-hidden px-4 md:px-12 mt-20">
       <div className="flex w-full max-w-6xl p-8">
         {/* Left Side */}
         <div className="w-full md:w-1/3 p-6 space-y-6">
@@ -16,7 +44,7 @@ const LoginPage = () => {
           </div>
 
           {/* Login Form */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username/Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold mb-2 text-left">Username / Email</label>
@@ -27,6 +55,8 @@ const LoginPage = () => {
                   id="email"
                   placeholder="Username / Email"
                   className="w-full px-2 py-1 outline-none"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -41,9 +71,14 @@ const LoginPage = () => {
                   id="password"
                   placeholder="Password"
                   className="w-full px-2 py-1 outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
+
+            {/* Error Message */}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
             {/* Remember Me */}
             <div className="flex items-center text-sm">
@@ -97,7 +132,7 @@ const LoginPage = () => {
           <h2 className="text-5xl font-semibold text-gray-800 mb-2 text-center">
             Securely Upload Your Document and Get Instant Feedback!
           </h2>
-          <img src={DataProtectionImage} className='w-full h-full max-w-lg mx-auto' alt="Data Protection" />
+          <img src={DataProtectionImage} className="w-full h-full max-w-lg mx-auto" alt="Data Protection" />
         </div>
       </div>
     </div>

@@ -1,18 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-// import HeroImage from '../assets/hero_image.jpg'; // Replace with your actual image path
+import FeaturesSection from '../components/FeaturesSection';
+import HeroImage from '../assets/images/hero_image.png'; // Correct way to import image
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Homepage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
-      <nav className="bg-white shadow p-4 flex justify-between items-center">
-        <div className="text-2xl font-bold text-blue-600">ProcessIQ</div>
-        <div className="space-x-4">
-          <Link to="/login" className="text-gray-600 hover:text-blue-500">Login</Link>
-          <Link to="/signup" className="text-gray-600 hover:text-blue-500">Sign Up</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <header className="flex flex-col md:flex-row items-center justify-between px-6 py-12">
@@ -27,13 +24,13 @@ const Homepage = () => {
           </p>
           <div className="space-x-4">
             <Link
-              to="/start"
+              to="/chatspage"
               className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600"
             >
               Get Started
             </Link>
             <Link
-              to="/features"
+              to="/"
               className="bg-gray-200 text-gray-700 py-2 px-6 rounded-md hover:bg-gray-300"
             >
               Learn More
@@ -42,12 +39,13 @@ const Homepage = () => {
         </div>
 
         {/* Right Image */}
-        <div className="max-w-lg mt-8 md:mt-0">
-          <img
-            // src={HeroImage}
-            alt="Workflow illustration"
-            className="w-full rounded-md shadow-lg"
-          />
+        <div className="max-w-lg mt-16 mr-10">
+        <img
+         src={HeroImage}
+         alt="Workflow illustration"
+         className="w-full rounded-md"
+        />
+
         </div>
       </header>
 
@@ -80,11 +78,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-6 text-center">
-        <p>&copy; {new Date().getFullYear()} ProcessIQ. All rights reserved.</p>
-      </footer>
+      <FeaturesSection />
     </div>
   );
 };
