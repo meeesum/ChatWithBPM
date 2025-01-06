@@ -42,7 +42,7 @@ const Navbar = () => {
             <img
               src={UserImage}
               alt="Account"
-              className="w-8 h-8 rounded-full cursor-pointer"
+              className="w-12 h-12 rounded-full cursor-pointer"
             />
             {/* Logout Button */}
             <button
