@@ -101,7 +101,7 @@ const ChatsPage = () => {
   ); // Filter chats based on search term
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full mt-20">
       {/* Chat List - Fixed width with no padding or margin from the left */}
       <div className="w-[320px] bg-gray-50 border-r pl-0 ml-0">
         {/* Search Bar */}
