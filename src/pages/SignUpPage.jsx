@@ -1,8 +1,8 @@
 import React from 'react';
 import { FaEnvelope, FaKey } from 'react-icons/fa';
 
-import LogoImage from '..\assets\images\Logo.png';
-import SignUpImage from '..\assets\images\Signup_image.jpg'; 
+import LogoImage from '../assets/images/logo.png';
+import SignUpImage from '../assets/images/signup_image.jpg'; 
 
 const SignUpPage = () => {
   return (
