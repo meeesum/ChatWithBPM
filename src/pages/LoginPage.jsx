@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { FaEnvelope, FaKey, FaGoogle, FaFacebook } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
-import LogoImage from '..\assets\images\Logo.png';
-import DataProtectionImage from '..\assets\images\Data_protection.jpg';
+import LogoImage from '../assets/images/logo.png';
+import DataProtectionImage from '../assets/images/data_protection.jpg';
 
 const LoginPage = () => {
   // States for form inputs
