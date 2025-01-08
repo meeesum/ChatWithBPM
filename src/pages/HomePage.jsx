@@ -3,14 +3,10 @@ import { Link } from 'react-router-dom';
 import FeaturesSection from '../components/FeaturesSection';
 import HeroImage from '../assets/images/hero_image.png'; // Correct way to import image
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 const Homepage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Navbar */}
-      <Navbar />
-
       {/* Hero Section */}
       <header className="flex flex-col md:flex-row items-center justify-between px-6 py-12">
         {/* Left Content */}

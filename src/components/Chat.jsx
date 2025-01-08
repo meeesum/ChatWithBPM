@@ -1,28 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Chat = ({ messages, onSendMessage }) => {
-  const [message, setMessage] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (message.trim()) {
-      onSendMessage(message);
-      setMessage('');
-    }
-  };
-
+const Chat = ({ messages }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Chat Messages */}
-      <div className="flex-grow overflow-y-auto mb-4">
+      <div className="flex-grow overflow-y-auto mb-4 px-4">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}
+            className={`mb-3 flex ${
+              msg.role === 'user' ? 'justify-end' : 'justify-start'
+            }`}
           >
             <p
-              className={`inline-block p-2 rounded-lg ${
-                msg.role === 'user' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+              className={`inline-block max-w-[80%] p-3 rounded-lg shadow-md ${
+                msg.role === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-800'
               }`}
             >
               {msg.content}
@@ -30,23 +24,6 @@ const Chat = ({ messages, onSendMessage }) => {
           </div>
         ))}
       </div>
-
-      {/* Message Input */}
-      {/* <form onSubmit={handleSubmit} className="flex">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="flex-grow border rounded-l-md px-4 py-2"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-r-md"
-        >
-          Send
-        </button>
-      </form> */}
     </div>
   );
 };

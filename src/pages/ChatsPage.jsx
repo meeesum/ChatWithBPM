@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ChatList from '../components/ChatList';
 import Chat from '../components/Chat';
-import { FaSearch } from 'react-icons/fa'; // Import Font Awesome search icon
+import { FaSearch, FaBars } from 'react-icons/fa';
 
 const ChatsPage = () => {
   const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const [newMessage, setNewMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showChatList, setShowChatList] = useState(false);
 
-  // Dummy data for chats
   const dummyChats = [
     { id: 1, name: 'Retail Store BPMN' },
     { id: 2, name: 'Healthcare Workflow BPMN' },
@@ -45,7 +45,6 @@ const ChatsPage = () => {
   };
 
   useEffect(() => {
-    // Load dummy chats and select the first chat by default
     setChats(dummyChats);
     if (dummyChats.length > 0) {
       setSelectedChatId(dummyChats[0].id);
@@ -53,7 +52,6 @@ const ChatsPage = () => {
   }, []);
 
   useEffect(() => {
-    // Load dummy messages for the selected chat
     if (selectedChatId) {
       setMessages(dummyMessages[selectedChatId] || []);
     }
@@ -62,7 +60,6 @@ const ChatsPage = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
-    // Simulate sending a user message and receiving an AI response
     const newUserMessage = { role: 'user', content: newMessage };
     const aiResponse = {
       role: 'ai',
@@ -70,13 +67,12 @@ const ChatsPage = () => {
     };
 
     setMessages((prev) => [...prev, newUserMessage, aiResponse]);
-    setNewMessage(""); // Clear input after sending message
+    setNewMessage('');
   };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Simulate user uploading an XML file and AI responding
       const newUserMessage = {
         role: 'user',
         content: `Uploaded file: ${file.name}`,
@@ -94,93 +90,111 @@ const ChatsPage = () => {
     const newChat = { id: Date.now(), name: 'New Chat' };
     setChats((prevChats) => [newChat, ...prevChats]);
     setSelectedChatId(newChat.id);
+    setShowChatList(false); // Close chat list on new chat creation (mobile)
   };
 
   const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ); // Filter chats based on search term
+  );
 
   return (
-    <div className="flex h-screen w-full mt-20">
-      {/* Chat List - Fixed width with no padding or margin from the left */}
-      <div className="w-[320px] bg-gray-50 border-r pl-0 ml-0">
-        {/* Search Bar */}
-        <div className="p-4">
-          <div className="flex items-center w-full border border-gray-300 rounded-md">
-            <FaSearch className="ml-2 text-gray-500" /> {/* Magnifying glass icon */}
-            <input
-              type="text"
-              placeholder="Search Chats"
-              className="w-full p-2 pl-8 border-0 rounded-md focus:outline-none"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm state
-            />
-          </div>
-        </div>
-
-        {/* New Chat Button */}
-        <div className="p-4">
-          <button
-            onClick={handleNewChat}
-            className="w-full px-4 py-2 bg-blue-500 text-white text-lg rounded-md hover:bg-blue-600"
-          >
-            New Chat
-          </button>
-        </div>
-
-        <ChatList
-          chats={filteredChats} // Use filtered chats
-          selectedChatId={selectedChatId}
-          onSelectChat={setSelectedChatId}
-        />
+    <div className="flex flex-col h-screen w-screen">
+      {/* Navbar */}
+      <div className="h-[60px] bg-blue-500 text-white flex items-center px-4 mt-6 lg:hidden">
+        <button
+          className="p-2 bg-white text-blue-500 rounded-md"
+          onClick={() => setShowChatList(!showChatList)}
+        >
+          <FaBars />
+        </button>
+        <h1 className="ml-4 text-xl font-bold">Chat Application</h1>
       </div>
 
-      {/* Chat Area with no flex-grow */}
-      <div className="w-full max-w-[calc(100%-320px)] p-6 bg-white mb-16">
-        {selectedChatId ? (
-          <>
-            <Chat messages={messages} />
-            <div className="flex items-center mt-4 ">
+      {/* Main Content */}
+      <div className="flex flex-grow lg:flex-row flex-col">
+        {/* Chat List Sidebar */}
+        <div
+          className={`fixed top-[60px] left-0 h-full w-[320px] bg-gray-50 border-r shadow-lg transform ${
+            showChatList ? 'translate-x-0' : '-translate-x-full'
+          } transition-transform duration-300 lg:static lg:translate-x-0 lg:w-[320px] lg:block mt-5 hidden`}
+        >
+          <div className="p-4 sticky top-0 bg-gray-50">
+            <div className="flex items-center w-full border border-gray-300 rounded-md">
+              <FaSearch className="ml-2 text-gray-500" />
               <input
                 type="text"
-                placeholder="Type your message..."
-                className="flex-grow border border-gray-300 p-2 rounded-md"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && newMessage.trim()) {
-                    handleSendMessage();
-                  }
-                }}
+                placeholder="Search Chats"
+                className="w-full p-2 pl-8 border-0 rounded-md focus:outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button
-                onClick={handleSendMessage}
-                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Send
-              </button>
-              <div className="ml-4">
-                <input
-                  type="file"
-                  accept=".xml"
-                  className="hidden"
-                  id="file-upload"
-                  onChange={handleFileUpload}
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                  Upload XML
-                </label>
-              </div>
             </div>
-          </>
-        ) : (
-          <div className="text-gray-500 flex items-center justify-center h-full">
-            Select or create a chat to get started.
           </div>
-        )}
+          <div className="p-4">
+            <button
+              onClick={handleNewChat}
+              className="w-full px-4 py-2 bg-blue-500 text-white text-lg rounded-md hover:bg-blue-600"
+            >
+              New Chat
+            </button>
+          </div>
+          <ChatList
+            chats={filteredChats}
+            selectedChatId={selectedChatId}
+            onSelectChat={(chatId) => {
+              setSelectedChatId(chatId);
+              setShowChatList(false); // Close chat list on mobile when a chat is selected
+            }}
+          />
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-grow flex flex-col p-6 bg-white lg:ml-[320px]">
+          {selectedChatId ? (
+            <>
+              <Chat messages={messages} />
+              <div className="flex items-center mt-auto sticky bottom-0 bg-white p-4 border-t">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  className="flex-grow border border-gray-300 p-2 rounded-md"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newMessage.trim()) {
+                      handleSendMessage();
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Send
+                </button>
+                <div className="ml-4">
+                  <input
+                    type="file"
+                    accept=".xml"
+                    className="hidden"
+                    id="file-upload"
+                    onChange={handleFileUpload}
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  >
+                    Upload XML
+                  </label>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-gray-500 flex items-center justify-center h-full">
+              Select or create a chat to get started.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

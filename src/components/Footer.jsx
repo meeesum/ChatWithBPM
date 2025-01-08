@@ -2,10 +2,10 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-6 ">
-      <div className="max-w-6xl mx-auto flex justify-between items-center px-6">
+    <footer className="bg-gray-900 text-white py-6">
+      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row justify-between items-center px-6">
         {/* Left side - Logo or Text */}
-        <div className="text-lg">
+        <div className="text-lg mb-4 lg:mb-0">
           <span>&copy; {new Date().getFullYear()} BPMNGenie. All rights reserved.</span>
         </div>
 
