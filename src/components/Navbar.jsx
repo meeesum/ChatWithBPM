@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import UserImage from '../assets/images/user_image.jpeg';
 
 const Navbar = () => {
   // Check if the user is logged in from localStorage
@@ -39,9 +40,9 @@ const Navbar = () => {
         {isLoggedIn ? (
           <>
             <img
-              src={user?.profileImage || "/path/to/default-image.png"}
+              src={UserImage}
               alt="Account"
-              className="w-8 h-8 rounded-full cursor-pointer"
+              className="w-12 h-12 rounded-full cursor-pointer"
             />
             {/* Logout Button */}
             <button
