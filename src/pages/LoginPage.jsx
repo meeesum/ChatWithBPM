@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaEnvelope, FaKey, FaGoogle, FaFacebook } from 'react-icons/fa';
+import { FaEnvelope, FaKey, FaGoogle, FaFacebook, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import LogoImage from '../assets/images/logo.png';
@@ -9,6 +9,7 @@ const LoginPage = () => {
   // States for form inputs
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const LoginPage = () => {
       // Save user data to localStorage to persist login state
       const userData = { username: 'JohnDoe', profileImage: '/path/to/image.jpg' }; // Example user data
       localStorage.setItem('user', JSON.stringify(userData));
-      
+
       // Successful login, navigate to the ChatPage
       navigate('/chatspage');
     } else {
@@ -36,19 +37,21 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white overflow-hidden px-4 md:px-12 mt-20">
-      <div className="flex w-full max-w-6xl p-8">
+      <div className="flex w-full max-w-6xl p-8 flex-wrap">
         {/* Left Side */}
         <div className="w-full md:w-1/3 p-6 space-y-6">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <img src={LogoImage} alt="Logo" className="h-20" />
+            <img src={LogoImage} alt="Logo" className="h-28 w-20" />
           </div>
 
           {/* Login Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username/Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold mb-2 text-left">Username / Email</label>
+              <label htmlFor="email" className="block text-sm font-semibold mb-2 text-left">
+                Username / Email
+              </label>
               <div className="flex items-center border rounded-md p-2">
                 <FaEnvelope className="text-gray-400 mr-3" />
                 <input
@@ -64,17 +67,26 @@ const LoginPage = () => {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold mb-2 text-left">Password</label>
+              <label htmlFor="password" className="block text-sm font-semibold mb-2 text-left">
+                Password
+              </label>
               <div className="flex items-center border rounded-md p-2">
                 <FaKey className="text-gray-400 mr-3" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="Password"
                   className="w-full px-2 py-1 outline-none"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  className="ml-2 text-gray-400 focus:outline-none"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 
@@ -84,16 +96,23 @@ const LoginPage = () => {
             {/* Remember Me */}
             <div className="flex items-center text-sm">
               <input type="checkbox" id="remember" className="mr-2 w-5 h-5" />
-              <label htmlFor="remember" className="ml-2 text-sm">Remember me</label>
+              <label htmlFor="remember" className="ml-2 text-sm">
+                Remember me
+              </label>
             </div>
 
             {/* Save my login info text */}
             <div className="text-sm text-gray-500 ml-7 mt-2">
-              <label htmlFor="save-info" className="ml-2">Save my login info for the next time</label>
+              <label htmlFor="save-info" className="ml-2">
+                Save my login info for the next time
+              </label>
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            >
               Login
             </button>
           </form>
@@ -102,7 +121,10 @@ const LoginPage = () => {
           <div className="text-center mt-4">
             <p className="text-sm text-gray-500">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-500 hover:text-blue-600 hover:underline">
+              <Link
+                to="/signup"
+                className="text-blue-500 hover:text-blue-600 hover:underline"
+              >
                 Sign up
               </Link>
             </p>
@@ -111,8 +133,9 @@ const LoginPage = () => {
           {/* Or Divider */}
           <div className="relative my-6">
             <hr className="border-t-2 border-gray-300 w-full" />
-            <span className="absolute left-1/2 transform -translate-x-1/2 text-gray-500 px-4 bg-white">or</span>
-            <div className="absolute left-0 right-0 top-0 bottom-0 bg-gradient-to-r from-transparent via-gray-200 to-transparent h-1" />
+            <span className="absolute left-1/2 transform -translate-x-1/2 text-gray-500 px-4 bg-white">
+              or
+            </span>
           </div>
 
           {/* Social Sign-In */}
@@ -129,11 +152,15 @@ const LoginPage = () => {
         </div>
 
         {/* Right Side */}
-        <div className="w-full md:w-2/3 pl-6 flex flex-col items-center">
+        <div className="w-full md:w-2/3 pl-6 flex-col items-center hidden md:flex">
           <h2 className="text-5xl font-semibold text-gray-800 mb-2 text-center">
             Securely Upload Your Document and Get Instant Feedback!
           </h2>
-          <img src={DataProtectionImage} className="w-full h-full max-w-lg mx-auto" alt="Data Protection" />
+          <img
+            src={DataProtectionImage}
+            className="w-full h-full max-w-lg mx-auto"
+            alt="Data Protection"
+          />
         </div>
       </div>
     </div>
