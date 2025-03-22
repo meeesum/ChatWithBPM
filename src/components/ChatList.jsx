@@ -1,24 +1,40 @@
-import React from 'react';
+import React from "react";
+import { deleteChat } from "../Services/chatService"; // Import delete function
 
-const ChatList = ({ chats, selectedChatId, onSelectChat }) => {
+const ChatList = ({ chats, selectedChatId, onSelectChat, onChatDeleted }) => {
+  const handleDelete = async (chatId) => {
+    if (window.confirm("Are you sure you want to delete this chat?")) {
+      try {
+        await deleteChat(chatId);
+        onChatDeleted(chatId); // Remove chat from UI
+      } catch (error) {
+        console.error("Error deleting chat:", error);
+      }
+    }
+  };
+
   return (
-    <div className="overflow-y-auto h-[calc(100vh-180px)]">
-      {chats.map((chat) => (
-        <div
-          key={chat.id}
-          onClick={() => onSelectChat(chat.id)}
-          className={`p-4 cursor-pointer ${
-            chat.id === selectedChatId
-              ? 'bg-blue-100 border-l-4 border-blue-500'
-              : 'hover:bg-gray-100'
-          }`}
-        >
-          <h3 className="font-semibold text-base truncate">{chat.name}</h3>
-          <p className="text-sm text-gray-500 truncate">
-            {chat.lastMessage || 'No messages yet'}
-          </p>
-        </div>
-      ))}
+    <div className="p-4 space-y-2">
+      {chats.length === 0 ? (
+        <p className="text-red-500 text-center">No chats exist in chat list. Upload a BPMN to start.</p>
+      ) : (
+        chats.map((chat) => (
+          <div
+            key={chat.id}
+            className={`flex justify-between items-center p-3 rounded-md cursor-pointer ${
+              chat.id === selectedChatId ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            <span onClick={() => onSelectChat(chat.id)} className="flex-grow cursor-pointer">{chat.title}</span>
+            <button
+              onClick={() => handleDelete(chat.id)}
+              className="ml-2 px-2 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        ))
+      )}
     </div>
   );
 };
