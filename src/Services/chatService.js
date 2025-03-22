@@ -72,7 +72,7 @@ export const fetchChats = async () => {
     try {
       const response = await axiosInstance.get(`chats/${bpmid}/`);
 
-      console.log("in chatMessage in service" );
+      console.log("in fetching chatMessage in service" );
       console.log( response.data);
 
       return response.data || []; // Ensure it always returns an array
