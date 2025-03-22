@@ -49,11 +49,11 @@ const FeaturesSection = () => {
       </div>
 
       {/* View All Features Button */}
-      <div className="mt-12">
+      {/* <div className="mt-12">
         <button className="bg-black text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition duration-300">
           View All Features
         </button>
-      </div>
+      </div> */}
     </section>
   );
 };
