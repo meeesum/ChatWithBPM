@@ -43,7 +43,7 @@ const UserService = {
 
       return response.data;
     } catch (error) {
-      console.log("in catch");
+      console.log("in catch of signup");
       throw error.response?.data || 'Signup failed';
     }
   },

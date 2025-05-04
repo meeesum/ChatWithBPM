@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:8000/api/";
+// const API_BASE = "http://localhost:8000/api/";
+const API_BASE = "https://chatwithbpm-backend.onrender.com/api/";
 
 // Function to get the token from localStorage
 const getAuthToken = () => localStorage.getItem("access_token");
