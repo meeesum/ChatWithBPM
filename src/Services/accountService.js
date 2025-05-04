@@ -1,7 +1,8 @@
 // src/services/UserService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/auth'; // Update if needed
+// const API_BASE_URL = 'http://127.0.0.1:8000/api/auth'; // Update if needed
+const API_BASE_URL = 'https://chatwithbpm-backend.onrender.com/api/auth'; // Update if needed
 
 const UserService = {
   login: async (email, password) => {
