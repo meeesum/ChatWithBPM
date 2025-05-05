@@ -11,7 +11,7 @@ const UserService = {
         email,
         password,
       });
-
+      
       // Save tokens to localStorage or sessionStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
@@ -26,7 +26,7 @@ const UserService = {
       throw error.response?.data || 'Login failed';
     }
   },
-
+ 
   signup: async (username, email, password) => {
     console.log("in sign up");
     try {
@@ -37,7 +37,7 @@ const UserService = {
         password,
       });
 
-      // Save tokens after signup (optional, if you want auto-login after signup)
+    // Save tokens after signup (optional, if you want auto-login after signup)
     //   localStorage.setItem('access_token', response.data.access);
     //   localStorage.setItem('refresh_token', response.data.refresh);
     //   localStorage.setItem('username', response.data.user.username);
