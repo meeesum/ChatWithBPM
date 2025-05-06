@@ -19,26 +19,32 @@ const ChatsPage = () => {
   const [description, setDescription] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); // New state for delete overlay
-  const [showDescription, setShowDescription] = useState(false); // Add this at the top with other useState calls
-
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // ✅ NEW
 
   useEffect(() => {
     const loadChats = async () => {
+      setIsLoading(true);
       try {
         const data = await fetchChats();
         setChats(data);
-        if (data.length > 0) setSelectedChatId(data[0].id);
+        if (data.length > 0) {
+          setSelectedChatId(data[0].id);
+        }
       } catch (error) {
         console.error("Error loading chats:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadChats();
-  }, [chats, description]);
+  }, []);
 
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedChatId) return;
+      setIsLoading(true); // ✅ Show loading on chat switch
       try {
         const chat = chats.find((c) => c.id === selectedChatId);
         if (chat) setDescription(chat.description);
@@ -46,6 +52,8 @@ const ChatsPage = () => {
         setMessages(data);
       } catch (error) {
         console.error("Error loading messages:", error);
+      } finally {
+        setIsLoading(false); // ✅ End loading
       }
     };
     loadMessages();
@@ -137,8 +145,10 @@ const ChatsPage = () => {
   );
 
   return (
-    <div className="fixed mt-6 overflow-hidden overflow-y-scroll scrollbar-none bottom-0 left-0 flex flex-col md:flex-row"
-    style={{ height: "calc(100vh - 96px)" }}>
+    <div
+      className="main-chat-page w-full fixed hide-scrollbar mt-6 overflow-hidden bottom-0 left-0 flex flex-col md:flex-row"
+      style={{ height: "calc(100vh - 96px)" }}
+    >
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex items-center justify-between p-3">
         <button
@@ -205,23 +215,31 @@ const ChatsPage = () => {
       </div>
 
       {/* Chat Area */}
-      
       <div className="flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
+        <div
+          className="border-b px-4 py-2 bg-gray-100 flex items-center justify-between cursor-pointer"
+          onClick={() => setShowDescription((prev) => !prev)}
+        >
+          <span className="font-semibold">Natural Language Description</span>
+          <svg
+            className={`w-4 h-4 transform transition-transform duration-200 ${
+              showDescription ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
 
-      <div className="border-b px-4 py-2 bg-gray-100 flex items-center justify-between cursor-pointer" onClick={() => setShowDescription(prev => !prev)}>
-  <span className="font-semibold">Natural Language Description</span>
-  <svg className={`w-4 h-4 transform transition-transform duration-200 ${showDescription ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-  </svg>
-</div>
-
-{showDescription && (
-  <div
-    className="border px-4 py-4 bg-white max-h-48 overflow-y-auto transition-all duration-300 ease-in-out"
-    dangerouslySetInnerHTML={{ __html: description }}>
-  </div>
-)}
-
+        {showDescription && (
+          <div
+            className="border px-4 py-4 bg-white max-h-48 overflow-y-auto transition-all duration-300 ease-in-out"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        )}
 
         <div className="flex-1 overflow-y-auto p-4">
           {selectedChatId ? (
@@ -257,12 +275,16 @@ const ChatsPage = () => {
         ></div>
       )}
 
-      {/* Global Loading Overlay */}
-      {(isProcessing || isDeleting) && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm">
+      {/* Global Overlays */}
+      {(isProcessing || isDeleting || isLoading) && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/1 backdrop-blur-sm">
           <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
           <p className="mt-4 text-blue-700 font-semibold">
-            {isDeleting ? "Deleting chat..." : "Processing BPMN..."}
+            {isDeleting
+              ? "Deleting chat..."
+              : isProcessing
+              ? "Processing BPMN..."
+              : "Loading..."}
           </p>
         </div>
       )}
