@@ -20,6 +20,8 @@ const ChatsPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false); // New state for delete overlay
+  const [showDescription, setShowDescription] = useState(false); // Add this at the top with other useState calls
+
 
   useEffect(() => {
     const loadChats = async () => {
@@ -135,7 +137,8 @@ const ChatsPage = () => {
   );
 
   return (
-    <div className="relative mt-6 overflow-hidden h-screen flex flex-col md:flex-row">
+    <div className="fixed mt-6 overflow-hidden overflow-y-scroll scrollbar-none bottom-0 left-0 flex flex-col md:flex-row"
+    style={{ height: "calc(100vh - 96px)" }}>
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex items-center justify-between p-3">
         <button
@@ -151,7 +154,7 @@ const ChatsPage = () => {
       <div
         className={`fixed bottom-0 left-0 overflow-hidden h-full w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
           isSidebarOpen ? "z-40 translate-x-0" : "-translate-x-full"
-        } md:w-[30%] md:block shadow-lg border-r`}
+        } md:w-[20%] md:block shadow-lg border-r`}
       >
         <div className="flex items-center justify-between p-4 border-b md:hidden">
           <span className="font-bold text-lg">Chats</span>
@@ -202,8 +205,24 @@ const ChatsPage = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col w-full md:w-[70%] overflow-hidden">
-        <div className="border px-4 py-4 max-h-28 overflow-y-auto">{description}</div>
+      
+      <div className="flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
+
+      <div className="border-b px-4 py-2 bg-gray-100 flex items-center justify-between cursor-pointer" onClick={() => setShowDescription(prev => !prev)}>
+  <span className="font-semibold">Natural Language Description</span>
+  <svg className={`w-4 h-4 transform transition-transform duration-200 ${showDescription ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+  </svg>
+</div>
+
+{showDescription && (
+  <div
+    className="border px-4 py-4 bg-white max-h-48 overflow-y-auto transition-all duration-300 ease-in-out"
+    dangerouslySetInnerHTML={{ __html: description }}>
+  </div>
+)}
+
+
         <div className="flex-1 overflow-y-auto p-4">
           {selectedChatId ? (
             <Chat messages={messages} />
