@@ -21,7 +21,7 @@ const ChatsPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // ✅ NEW
+  const [isLoading, setIsLoading] = useState(true); //  NEW
 
   useEffect(() => {
     const loadChats = async () => {
@@ -44,7 +44,7 @@ const ChatsPage = () => {
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedChatId) return;
-      setIsLoading(true); // ✅ Show loading on chat switch
+      setIsLoading(true); // Show loading on chat switch
       try {
         const chat = chats.find((c) => c.id === selectedChatId);
         if (chat) setDescription(chat.description);
@@ -53,7 +53,7 @@ const ChatsPage = () => {
       } catch (error) {
         console.error("Error loading messages:", error);
       } finally {
-        setIsLoading(false); // ✅ End loading
+        setIsLoading(false); //   End loading
       }
     };
     loadMessages();
@@ -147,7 +147,7 @@ const ChatsPage = () => {
   return (
     <div
       className="main-chat-page w-full fixed hide-scrollbar mt-6 overflow-hidden bottom-0 left-0 flex flex-col md:flex-row"
-      style={{ height: "calc(100vh - 96px)" }}
+      style={{ height: "calc(100vh - 100px)" }}
     >
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex items-center justify-between p-3">
@@ -277,8 +277,12 @@ const ChatsPage = () => {
 
       {/* Global Overlays */}
       {(isProcessing || isDeleting || isLoading) && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/1 backdrop-blur-sm">
-          <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+        
+         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-md">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500">
+
+            </div>
+            
           <p className="mt-4 text-blue-700 font-semibold">
             {isDeleting
               ? "Deleting chat..."
@@ -287,6 +291,7 @@ const ChatsPage = () => {
               : "Loading..."}
           </p>
         </div>
+        
       )}
     </div>
   );
