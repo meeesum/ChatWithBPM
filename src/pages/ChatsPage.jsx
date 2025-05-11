@@ -146,14 +146,14 @@ const ChatsPage = () => {
 
   return (
     <div
-      className="main-chat-page w-full fixed hide-scrollbar overflow-hidden bottom-0 left-0 flex flex-col md:flex-row"
-      style={{ height: "calc(100vh - 100px)" }}
+      className="main-chat-page h-[calc(100vh-100px)] w-full mt-[100px] hide-scrollbar overflow-hidden flex flex-col md:flex-row"
+     
     >
       <div className="side-barr flex flex-col w-full lg:w-[20%]">
 
      
       {/* Mobile Toggle Button */}
-      <div className="two-buttons px-4 pb-2d flex w-full items-center gap-2 border-b border-r justify-start sm:justify-between">
+      <div className="two-buttons px-4 pb-2 flex w-full items-center gap-2 border-b border-r justify-start sm:justify-between">
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="flex items-center text-blue-500 font-bold"
