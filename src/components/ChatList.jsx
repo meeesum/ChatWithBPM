@@ -3,7 +3,7 @@ import { FaTrash } from "react-icons/fa";
 
 const ChatList = ({ chats, selectedChatId, onSelectChat, onDeleteChat }) => {
   return (
-    <div className="relative  space-y-2">
+    <div className="relative chatlist-component space-y-2">
       {chats.length === 0 ? (
         <p className="text-red-500 text-center">
           No chats exist in chat list. Upload a BPMN to start.

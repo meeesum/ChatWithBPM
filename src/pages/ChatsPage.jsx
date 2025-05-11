@@ -146,11 +146,14 @@ const ChatsPage = () => {
 
   return (
     <div
-      className="main-chat-page w-full fixed hide-scrollbar mt-6 overflow-hidden bottom-0 left-0 flex flex-col md:flex-row"
+      className="main-chat-page w-full fixed hide-scrollbar overflow-hidden bottom-0 left-0 flex flex-col md:flex-row"
       style={{ height: "calc(100vh - 100px)" }}
     >
+      <div className="side-barr flex flex-col w-full lg:w-[20%]">
+
+     
       {/* Mobile Toggle Button */}
-      <div className="md:hidden flex items-center justify-between p-3">
+      <div className="two-buttons px-4 pb-2d flex w-full items-center gap-2 border-b border-r justify-start sm:justify-between">
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="flex items-center text-blue-500 font-bold"
@@ -158,13 +161,32 @@ const ChatsPage = () => {
           <FaComments className="mr-2" />
           Chats
         </button>
+
+        <div
+          className=" flex items-center justify-between cursor-pointer"
+          onClick={() => setShowDescription((prev) => !prev)}
+        >
+          <span className="font-semibold">NL Description</span>
+          <svg
+            className={`w-4 h-4 transform transition-transform duration-200 ${
+              showDescription ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </div>
 
       {/* Sidebar Drawer */}
       <div
-        className={`fixed bottom-0 left-0 overflow-hidden h-full w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        className={`drawer fixed bottom-0 left-0 overflow-hidden w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
           isSidebarOpen ? "z-40 translate-x-0" : "-translate-x-full"
-        } md:w-[20%] md:block shadow-lg border-r`}
+        }  md:block shadow-lg border-r`}
+        style={{height: "calc(100vh - 88px)"}}
       >
         <div className="flex items-center justify-between p-4 border-b md:hidden">
           <span className="font-bold text-lg">Chats</span>
@@ -214,25 +236,11 @@ const ChatsPage = () => {
         </div>
       </div>
 
+      </div>
+
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
-        <div
-          className="border-b px-4 py-2 bg-gray-100 flex items-center justify-between cursor-pointer"
-          onClick={() => setShowDescription((prev) => !prev)}
-        >
-          <span className="font-semibold">Natural Language Description</span>
-          <svg
-            className={`w-4 h-4 transform transition-transform duration-200 ${
-              showDescription ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
+      <div className="chatt-area flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
+       
 
         {showDescription && (
           <div
@@ -241,7 +249,7 @@ const ChatsPage = () => {
           />
         )}
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 ">
           {selectedChatId ? (
             <Chat messages={messages} />
           ) : (

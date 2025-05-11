@@ -11,7 +11,7 @@ const Chat = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="chat-component flex flex-col h-full">
       {/* Chat Messages */}
       <div className="flex-grow overflow-y-auto px-4">
         {Array.isArray(messages) && messages.length > 0 ? (
