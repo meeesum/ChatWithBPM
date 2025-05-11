@@ -146,7 +146,7 @@ const ChatsPage = () => {
 
   return (
     <div
-      className="main-chat-page h-[calc(100vh-00px)] w-full pt-[100px] top-0 hide-scrollbar overflow-hidden flex flex-col md:flex-row"
+      className="main-chat-page h-[calc(100vh-150px)] w-full mt-[100px] hide-scrollbar overflow-hidden flex flex-col md:flex-row sm:h-[calc(100vh-100px)]"
      
     >
       <div className="side-barr flex flex-col w-full lg:w-[20%]">
