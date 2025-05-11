@@ -40,7 +40,7 @@ const LoginPage = () => {
         localStorage.removeItem("savedPassword");
       }
       window.dispatchEvent(new Event("login"));
-      navigate("/");
+      navigate("/chatspage");
     } catch (err) {
       setError(err.message || "Invalid username or password");
     } finally {
