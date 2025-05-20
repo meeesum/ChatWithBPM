@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import ChatList from "../components/ChatList";
 import Chat from "../components/Chat";
-import { FaSearch, FaPlus } from "react-icons/fa";
-import { fetchChats, fetchChatMessages, sendQuery, uploadBPMN } from "../Services/chatService";
+import { FaSearch, FaPlus, FaComments, FaTimes } from "react-icons/fa";
+import {
+  fetchChats,
+  fetchChatMessages,
+  sendQuery,
+  uploadBPMN,
+  deleteChat,
+} from "../Services/chatService";
 
 const ChatsPage = () => {
   const [chats, setChats] = useState([]);
@@ -10,83 +16,186 @@ const ChatsPage = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [des, setDes] = useState("");
+  const [description, setDescription] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); //  NEW
 
   useEffect(() => {
     const loadChats = async () => {
+      setIsLoading(true);
       try {
         const data = await fetchChats();
-        if (Array.isArray(data)) {
-          setChats(data);
-          console.log(chats);
-          if (data.length > 0) setSelectedChatId(data[0].id);
+        setChats(data);
+        if (data.length > 0) {
+          setSelectedChatId(data[0].id);
         }
       } catch (error) {
-        console.error("Error fetching chats:", error);
+        console.error("Error loading chats:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadChats();
   }, []);
 
   useEffect(() => {
-    if (selectedChatId) {
-      const loadMessages = async () => {
-        try {
-          const data = await fetchChatMessages(selectedChatId);
-          const d= chats.find(i=>i.id===selectedChatId);
-          setDes(d.description);
-          if (Array.isArray(data)) setMessages(data);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      };
-      loadMessages();
-    }
+    const loadMessages = async () => {
+      if (!selectedChatId) return;
+      setIsLoading(true); // Show loading on chat switch
+      try {
+        const chat = chats.find((c) => c.id === selectedChatId);
+        if (chat) setDescription(chat.description);
+        const data = await fetchChatMessages(selectedChatId);
+        setMessages(data);
+      } catch (error) {
+        console.error("Error loading messages:", error);
+      } finally {
+        setIsLoading(false); //   End loading
+      }
+    };
+    loadMessages();
   }, [selectedChatId]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
+    const trimmed = newMessage.trim();
+    if (!trimmed || !selectedChatId) return;
+
+    const newQuery = {
+      id: `temp-user-${Date.now()}`,
+      text: trimmed,
+      response: "Processing query...",
+      created_at: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, newQuery]);
+    setNewMessage("");
+
     try {
-      const response = await sendQuery(selectedChatId, newMessage);
-      setMessages((prev) => [...prev, { role: "user", content: newMessage }, response]);
-      setNewMessage("");
+      const response = await sendQuery(selectedChatId, trimmed);
+      const finalMessage = {
+        id: response.data.id,
+        text: response.data.text,
+        response: response.data.response,
+        created_at: response.data.created_at,
+      };
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === newQuery.id ? finalMessage : msg))
+      );
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending query:", error);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === newQuery.id
+            ? { ...msg, response: "Failed to get response. Please try again." }
+            : msg
+        )
+      );
     }
   };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      setIsProcessing(true);
       try {
         const response = await uploadBPMN(file);
-        setChats((prev) => [response, ...prev]);
-        setSelectedChatId(response.id);
+        const updatedChats = [response, ...chats];
+        setChats(updatedChats);
+        setSelectedChatId(response.bpmid);
+        const data = await fetchChatMessages(response.bpmid);
+        setMessages(data);
+        setDescription(response.description);
       } catch (error) {
         console.error("Error uploading file:", error);
+      } finally {
+        setIsProcessing(false);
       }
     }
   };
 
   const handleChatDeleted = (deletedChatId) => {
-    setChats((prevChats) => prevChats.filter((chat) => chat.id !== deletedChatId));
+    setChats((prev) => prev.filter((chat) => chat.id !== deletedChatId));
     if (selectedChatId === deletedChatId) {
-      setSelectedChatId(null); // Clear selected chat if it was deleted
-      setMessages([]); // Clear messages UI
+      setSelectedChatId(null);
+      setMessages([]);
+      setDescription(null);
     }
   };
-  
 
-  
+  const handleDeleteChat = async (chatId) => {
+    if (window.confirm("Are you sure you want to delete this chat?")) {
+      setIsDeleting(true);
+      try {
+        await deleteChat(chatId);
+        handleChatDeleted(chatId);
+      } catch (error) {
+        console.error("Error deleting chat:", error);
+        alert("Failed to delete chat.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
 
-  const filteredChats = chats.filter((chat) => chat.title?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredChats = chats.filter((chat) =>
+    chat.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="flex mt-10   bottom-0 left-0 w-screen overflow-hidden">
-      {/* Chat List Sidebar */}
-      <div className="w-[30%] bg-gray-50 border-r shadow-lg flex flex-col h-screen">
-        {/* Search & New Chat */}
-        <div className="p-4 bg-gray-50">
+    <div
+      className="main-chat-page h-[calc(100vh-150px)] w-full mt-[100px] hide-scrollbar overflow-hidden flex flex-col md:flex-row sm:h-[calc(100vh-100px)]"
+     
+    >
+      <div className="side-barr flex flex-col w-full lg:w-[20%]">
+
+     
+      {/* Mobile Toggle Button */}
+      <div className="two-buttons px-4 pb-2 flex w-full items-center gap-2 border-b border-r justify-start sm:justify-between">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="flex items-center text-blue-500 font-bold"
+        >
+          <FaComments className="mr-2" />
+          Chats
+        </button>
+
+        <div
+          className=" flex items-center justify-between cursor-pointer"
+          onClick={() => setShowDescription((prev) => !prev)}
+        >
+          <span className="font-semibold">NL Description</span>
+          <svg
+            className={`w-4 h-4 transform transition-transform duration-200 ${
+              showDescription ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Sidebar Drawer */}
+      <div
+        className={`drawer fixed bottom-0 left-0 overflow-hidden w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+          isSidebarOpen ? "z-40 translate-x-0" : "-translate-x-full"
+        }  md:block shadow-lg border-r`}
+        style={{height: "calc(100vh - 88px)"}}
+      >
+        <div className="flex items-center justify-between p-4 border-b md:hidden">
+          <span className="font-bold text-lg">Chats</span>
+          <button onClick={() => setIsSidebarOpen(false)}>
+            <FaTimes className="text-xl" />
+          </button>
+        </div>
+
+        <div className="p-4">
           <div className="flex items-center w-full border border-gray-300 rounded-md">
             <FaSearch className="ml-2 text-gray-500" />
             <input
@@ -97,36 +206,59 @@ const ChatsPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
           <button
-            onClick={() => document.getElementById("file-upload-new-chat").click()}
+            onClick={() =>
+              document.getElementById("file-upload-new-chat").click()
+            }
             className="mt-4 w-full flex items-center justify-center p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             <FaPlus className="mr-2" /> Start New Chat
           </button>
-
-          <input type="file" accept=".bpmn" className="hidden" id="file-upload-new-chat" onChange={handleFileUpload} />
+          <input
+            type="file"
+            accept=".bpmn"
+            className="hidden"
+            id="file-upload-new-chat"
+            onChange={handleFileUpload}
+          />
         </div>
 
-        {/* Scrollable Chat List */}
-        <div className="flex-1 overflow-y-auto">
-        <ChatList chats={filteredChats} selectedChatId={selectedChatId} onSelectChat={setSelectedChatId} onChatDeleted={handleChatDeleted} />
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <ChatList
+            chats={filteredChats}
+            selectedChatId={selectedChatId}
+            onSelectChat={(id) => {
+              setSelectedChatId(id);
+              setIsSidebarOpen(false);
+            }}
+            onDeleteChat={handleDeleteChat}
+          />
         </div>
       </div>
 
+      </div>
+
       {/* Chat Area */}
-      <div className="flex flex-col flex-grow h-screen w-[70%]">
-      <div className="border px-4 py-4 overflow-y-auto h-28">
-          {des}
-        </div>
+      <div className="chatt-area flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
+       
 
-        {/* Scrollable Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {selectedChatId ? <Chat messages={messages} /> : <div className="text-gray-500 flex items-center justify-center h-full">No chats exist. Upload a BPMN to start.</div>}
-        </div>
+        {showDescription && (
+          <div
+            className="border px-4 py-4 bg-white max-h-48 overflow-y-auto transition-all duration-300 ease-in-out"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        )}
 
-        {/* Fixed Message Input */}
-        <div className="bg-white p-4 border-t bottom-0 left-0 flex items-center">
+        <div className="flex-1 overflow-y-auto p-4 ">
+          {selectedChatId ? (
+            <Chat messages={messages} />
+          ) : (
+            <div className="text-gray-500 flex items-center justify-center h-full">
+              No chats exist. Upload a BPMN to start.
+            </div>
+          )}
+        </div>
+        <div className="bg-white p-4 border-t flex items-center">
           <input
             type="text"
             placeholder="Type your message..."
@@ -135,17 +267,40 @@ const ChatsPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <button onClick={handleSendMessage} className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+          <button
+            onClick={handleSendMessage}
+            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
             Send
           </button>
-          <div className="ml-4">
-            <input type="file" accept=".bpmn" className="hidden" id="file-upload" onChange={handleFileUpload} />
-            <label htmlFor="file-upload" className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-              Upload XML
-            </label>
-          </div>
         </div>
       </div>
+
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Global Overlays */}
+      {(isProcessing || isDeleting || isLoading) && (
+        
+         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-md">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500">
+
+            </div>
+            
+          <p className="mt-4 text-blue-700 font-semibold">
+            {isDeleting
+              ? "Deleting chat..."
+              : isProcessing
+              ? "Processing BPMN..."
+              : "Loading..."}
+          </p>
+        </div>
+        
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ const Chat = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="chat-component flex flex-col h-full">
       {/* Chat Messages */}
       <div className="flex-grow overflow-y-auto px-4">
         {Array.isArray(messages) && messages.length > 0 ? (
@@ -21,16 +21,18 @@ const Chat = ({ messages }) => {
             <div key={index} className={`mb-3 flex  justify-end`}>
               <p
                 className={`inline-block max-w-[80%] p-3 rounded-lg shadow-md bg-blue-500 text-white `}
+                dangerouslySetInnerHTML={{ __html: msg.text }}
               >
-                {msg.text }
+                
               </p>
             </div>
 
             <div key={index} className={`mb-3 flex justify-start`}>
               <p
                 className={`inline-block max-w-[80%] p-3 rounded-lg shadow-md bg-gray-200 text-gray-800`}
+                dangerouslySetInnerHTML={{ __html: msg.response }}
               >
-                {msg.response }
+              
               </p>
             </div>
             </div>

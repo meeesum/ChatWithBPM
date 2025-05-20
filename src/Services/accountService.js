@@ -1,7 +1,8 @@
 // src/services/UserService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/auth'; // Update if needed
+// const API_BASE_URL = 'http://127.0.0.1:8000/api/auth'; // Update if needed
+const API_BASE_URL = 'https://chatwithbpm-backend.onrender.com/api/auth'; // Update if needed
 
 const UserService = {
   login: async (email, password) => {
@@ -10,7 +11,7 @@ const UserService = {
         email,
         password,
       });
-
+      
       // Save tokens to localStorage or sessionStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
@@ -25,7 +26,7 @@ const UserService = {
       throw error.response?.data || 'Login failed';
     }
   },
-
+ 
   signup: async (username, email, password) => {
     console.log("in sign up");
     try {
@@ -36,14 +37,14 @@ const UserService = {
         password,
       });
 
-      // Save tokens after signup (optional, if you want auto-login after signup)
+    // Save tokens after signup (optional, if you want auto-login after signup)
     //   localStorage.setItem('access_token', response.data.access);
     //   localStorage.setItem('refresh_token', response.data.refresh);
     //   localStorage.setItem('username', response.data.user.username);
 
       return response.data;
     } catch (error) {
-      console.log("in catch");
+      console.log("in catch of signup");
       throw error.response?.data || 'Signup failed';
     }
   },

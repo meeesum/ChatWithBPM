@@ -24,7 +24,7 @@ function MainLayout() {
     <>
     {/* Display Navbar on all pages */}
       <Navbar /> 
-      <div className="min-h-screen flex flex-col">
+      <div className="">
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />

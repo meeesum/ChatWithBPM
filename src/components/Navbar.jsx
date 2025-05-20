@@ -48,7 +48,7 @@ const Navbar = () => {
   return (
     <>
       {/* Navbar */}
-      <nav className="bg-gray-900 text-white  fixed w-full top-0 left-0 z-10">
+      <nav className="bg-gray-900 text-white  fixed w-full top-0 left-0 ">
         <div className="flex justify-between items-center px-6 py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
@@ -113,7 +113,7 @@ const Navbar = () => {
       </nav>
 
       {/* Content Padding */}
-      <div className="pt-[60px] lg:pt-[70px]"></div>
+      {/* <div className="pt-[60px] lg:pt-[70px]"></div> */}
     </>
   );
 };
