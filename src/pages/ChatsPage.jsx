@@ -249,18 +249,19 @@ const ChatsPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <button
-            onClick={handleSendMessage}
-            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            <FaPaperPlane />
-          </button>
-          <button
-            onClick={() => setShowDescription((prev) => !prev)}
-            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-semibold"
-          >
-            NL
-          </button>
+         <button
+  onClick={handleSendMessage}
+  className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-md hover:bg-blue-600"
+>
+  <FaPaperPlane />
+</button>
+<button
+  onClick={() => setShowDescription((prev) => !prev)}
+  className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-semibold"
+>
+  NL
+</button>
+
         </div>
       </div>
 
