@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ChatList from "../components/ChatList";
 import Chat from "../components/Chat";
-import { FaSearch, FaPlus, FaComments, FaTimes } from "react-icons/fa";
+import {
+  FaSearch,
+  FaPlus,
+  FaComments,
+  FaTimes,
+  FaPaperPlane,
+} from "react-icons/fa";
 import {
   fetchChats,
   fetchChatMessages,
@@ -21,7 +27,7 @@ const ChatsPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); //  NEW
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadChats = async () => {
@@ -44,7 +50,7 @@ const ChatsPage = () => {
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedChatId) return;
-      setIsLoading(true); // Show loading on chat switch
+      setIsLoading(true);
       try {
         const chat = chats.find((c) => c.id === selectedChatId);
         if (chat) setDescription(chat.description);
@@ -53,7 +59,7 @@ const ChatsPage = () => {
       } catch (error) {
         console.error("Error loading messages:", error);
       } finally {
-        setIsLoading(false); //   End loading
+        setIsLoading(false);
       }
     };
     loadMessages();
@@ -145,103 +151,78 @@ const ChatsPage = () => {
   );
 
   return (
-    <div
-      className="main-chat-page h-[calc(100vh-150px)] w-full mt-[100px] hide-scrollbar overflow-hidden flex flex-col md:flex-row sm:h-[calc(100vh-100px)]"
-     
-    >
+    <div className="main-chat-page h-[calc(100vh-150px)] w-full mt-[100px] overflow-hidden flex flex-col md:flex-row sm:h-[calc(100vh-100px)]">
+      {/* Sidebar */}
       <div className="side-barr flex flex-col w-full lg:w-[20%]">
-
-     
-      {/* Mobile Toggle Button */}
-      <div className="two-buttons px-4 pb-2 flex w-full items-center gap-2 border-b border-r justify-start sm:justify-between">
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="flex items-center text-blue-500 font-bold"
-        >
-          <FaComments className="mr-2" />
-          Chats
-        </button>
-
-        <div
-          className=" flex items-center justify-between cursor-pointer"
-          onClick={() => setShowDescription((prev) => !prev)}
-        >
-          <span className="font-semibold">NL Description</span>
-          <svg
-            className={`w-4 h-4 transform transition-transform duration-200 ${
-              showDescription ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
+        {/* Mobile Chats Button */}
+        <div className="px-4 pb-2 flex w-full items-center gap-2 border-b border-r justify-start md:hidden">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="flex items-center text-blue-500 font-bold"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Sidebar Drawer */}
-      <div
-        className={`drawer fixed bottom-0 left-0 overflow-hidden w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
-          isSidebarOpen ? "z-40 translate-x-0" : "-translate-x-full"
-        }  md:block shadow-lg border-r`}
-        style={{height: "calc(100vh - 88px)"}}
-      >
-        <div className="flex items-center justify-between p-4 border-b md:hidden">
-          <span className="font-bold text-lg">Chats</span>
-          <button onClick={() => setIsSidebarOpen(false)}>
-            <FaTimes className="text-xl" />
+            <FaComments className="mr-2" />
+            Chats
           </button>
         </div>
 
-        <div className="p-4">
-          <div className="flex items-center w-full border border-gray-300 rounded-md">
-            <FaSearch className="ml-2 text-gray-500" />
+        {/* Sidebar Drawer */}
+        <div
+          className={`drawer fixed bottom-0 left-0 overflow-hidden w-64 bg-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+            isSidebarOpen ? "z-40 translate-x-0" : "-translate-x-full"
+          } md:block shadow-lg border-r`}
+          style={{ height: "calc(100vh - 88px)" }}
+        >
+          <div className="flex items-center justify-between p-4 border-b md:hidden">
+            <span className="font-bold text-lg">Chats</span>
+            <button onClick={() => setIsSidebarOpen(false)}>
+              <FaTimes className="text-xl" />
+            </button>
+          </div>
+
+          <div className="p-4">
+            <div className="flex items-center w-full border border-gray-300 rounded-md">
+              <FaSearch className="ml-2 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search Chats"
+                className="w-full p-2 pl-8 border-0 rounded-md focus:outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={() =>
+                document.getElementById("file-upload-new-chat").click()
+              }
+              className="mt-4 w-full flex items-center justify-center p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            >
+              <FaPlus className="mr-2" /> Start New Chat
+            </button>
             <input
-              type="text"
-              placeholder="Search Chats"
-              className="w-full p-2 pl-8 border-0 rounded-md focus:outline-none"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              type="file"
+              accept=".bpmn"
+              className="hidden"
+              id="file-upload-new-chat"
+              onChange={handleFileUpload}
             />
           </div>
-          <button
-            onClick={() =>
-              document.getElementById("file-upload-new-chat").click()
-            }
-            className="mt-4 w-full flex items-center justify-center p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            <FaPlus className="mr-2" /> Start New Chat
-          </button>
-          <input
-            type="file"
-            accept=".bpmn"
-            className="hidden"
-            id="file-upload-new-chat"
-            onChange={handleFileUpload}
-          />
-        </div>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-4">
-          <ChatList
-            chats={filteredChats}
-            selectedChatId={selectedChatId}
-            onSelectChat={(id) => {
-              setSelectedChatId(id);
-              setIsSidebarOpen(false);
-            }}
-            onDeleteChat={handleDeleteChat}
-          />
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <ChatList
+              chats={filteredChats}
+              selectedChatId={selectedChatId}
+              onSelectChat={(id) => {
+                setSelectedChatId(id);
+                setIsSidebarOpen(false);
+              }}
+              onDeleteChat={handleDeleteChat}
+            />
+          </div>
         </div>
-      </div>
-
       </div>
 
       {/* Chat Area */}
-      <div className="chatt-area flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
-       
-
+      <div className="chatt-area relative flex-1 flex flex-col w-full md:w-[80%] overflow-hidden">
         {showDescription && (
           <div
             className="border px-4 py-4 bg-white max-h-48 overflow-y-auto transition-all duration-300 ease-in-out"
@@ -249,7 +230,7 @@ const ChatsPage = () => {
           />
         )}
 
-        <div className="flex-1 overflow-y-auto p-4 ">
+        <div className="flex-1 overflow-y-auto p-4">
           {selectedChatId ? (
             <Chat messages={messages} />
           ) : (
@@ -258,7 +239,8 @@ const ChatsPage = () => {
             </div>
           )}
         </div>
-        <div className="bg-white p-4 border-t flex items-center">
+
+        <div className="bg-white p-4 border-t flex items-center gap-2">
           <input
             type="text"
             placeholder="Type your message..."
@@ -267,12 +249,19 @@ const ChatsPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <button
-            onClick={handleSendMessage}
-            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Send
-          </button>
+         <button
+  onClick={handleSendMessage}
+  className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-md hover:bg-blue-600"
+>
+  <FaPaperPlane />
+</button>
+<button
+  onClick={() => setShowDescription((prev) => !prev)}
+  className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-semibold"
+>
+  NL
+</button>
+
         </div>
       </div>
 
@@ -280,17 +269,12 @@ const ChatsPage = () => {
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
-        ></div>
+        />
       )}
 
-      {/* Global Overlays */}
       {(isProcessing || isDeleting || isLoading) && (
-        
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-md">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500">
-
-            </div>
-            
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-md">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
           <p className="mt-4 text-blue-700 font-semibold">
             {isDeleting
               ? "Deleting chat..."
@@ -299,7 +283,6 @@ const ChatsPage = () => {
               : "Loading..."}
           </p>
         </div>
-        
       )}
     </div>
   );
