@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const API_BASE = "http://localhost:8000/api/";
-const API_BASE = "https://chatwithbpm-backend.onrender.com/api/";
+const API_BASE = "http://localhost:8000/api/";
+// const API_BASE = "https://chatwithbpm-backend.onrender.com/api/";
 
 // Function to get the token from localStorage
 const getAuthToken = () => localStorage.getItem("access_token");
@@ -45,13 +45,13 @@ export const uploadBPMN = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axiosInstance.post("upload/", formData, {
+  return axiosInstance.post("rag/upload_bpmn/", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 export const sendQuery = async (bpmid, query) => {
-  return axiosInstance.post("send_query/", { bpmid, query });
+  return axiosInstance.post("rag/send_query/", { bpmid, query });
 };
 
 export const fetchChats = async () => {
